@@ -150,7 +150,3 @@ module WrapProps = {
 };
 
 [@bs.module "react"] external fragment: 'a = "Fragment";
-
-module Hooks = {
-  
-}
