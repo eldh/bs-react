@@ -39,6 +39,3 @@ Very early experimentation. Only for the brave, not for production. Some things 
 
 Let's chat on [Discord](https://discord.gg/reasonml)!
 
-```
-
-```
