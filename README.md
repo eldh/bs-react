@@ -4,7 +4,7 @@
 npm install --save simple-reason-react
 ```
 
-SimpleReasonReact is a fork of [ReasonReact](https://reasonml.github.io/reason-react) adapted to work with [Hooks](https://reactjs.org/docs/hooks-intro.html).
+SimpleReasonReact is a fork of [ReasonReact](https://reasonml.github.io/reason-react) adapted to work with [Hooks](https://reactjs.org/docs/hooks-intro.html), with Hooks types from [Jared Forsyth](https://github.com/jaredly/hooks-experimental).
 
 Reason React uses the good old `createClass` under the hood. SimpleReasonReact has a simplified api that converts components defined in Reason to plain function components, allowing hooks to be used.
 
