@@ -1,4 +1,4 @@
-# Bs React
+# SimpleReasonReact
 
 ```sh
 npm install --save simple-reason-react
