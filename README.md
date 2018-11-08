@@ -10,7 +10,7 @@ Reason React uses the good old `createClass` under the hood. SimpleReasonReact h
 
 ## API
 
-This is how you define a component in SimpleReasonReact. There's only one type of component, and you only define a `render` function.
+The api is similar to ReasonReact, but there's only one type of component, and you can only define a `render` function.
 
 Example:
 
