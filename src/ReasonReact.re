@@ -49,9 +49,18 @@ type renderNotImplemented =
 type element =
   | Element(component): element
 and jsPropsToReason('jsProps) = (. 'jsProps) => component
+and jsElementWrapped =
+  option(
+    (
+      ~key: Js.nullable(string),
+      ~ref: Js.nullable(Js.nullable(reactRef) => unit)
+    ) =>
+    reactElement,
+  )
 and component = {
   debugName: string,
   reactClassInternal,
+  jsElementWrapped,
   render: unit => reactElement,
 };
 
@@ -89,6 +98,7 @@ let component = debugName => {
     reactClassInternal: createClass(debugName),
     debugName,
     render: renderDefault,
+    jsElementWrapped: None,
   };
   componentTemplate;
 };
@@ -109,11 +119,19 @@ let element =
       component: component,
     ) => {
   let element = Element(component);
-  createElement(
-    component.reactClassInternal,
-    ~props={"key": key, "ref": ref, "reasonProps": element},
-    [||],
-  );
+  switch (component.jsElementWrapped) {
+  | Some(jsElementWrapped) =>
+    jsElementWrapped(
+      ~key=Js.Nullable.return(key),
+      ~ref=Js.Nullable.return(ref),
+    )
+  | None =>
+    createElement(
+      component.reactClassInternal,
+      ~props={"key": key, "ref": ref, "reasonProps": element},
+      [||],
+    )
+  };
 };
 
 let wrapReasonForJs =
@@ -147,6 +165,14 @@ module WrapProps = {
     /* Use varargs under the hood */
     Obj.magic(createElementVerbatim)##apply(Js.Nullable.null, varargs);
   };
+  let dummyInteropComponent = component("Interop");
+
+  let wrapJsForReason = (~reactClass, ~props, children): component => {
+    let jsElementWrapped = Some(wrapProps(~reactClass, ~props, children));
+    {...dummyInteropComponent, jsElementWrapped};
+  };
 };
+let wrapJsForReason = WrapProps.wrapJsForReason;
+
 
 [@bs.module "react"] external fragment: 'a = "Fragment";

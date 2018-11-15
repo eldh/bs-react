@@ -24,9 +24,18 @@ type renderNotImplemented =
 type element =
   | Element(component): element
 and jsPropsToReason('jsProps) = (. 'jsProps) => component
+and jsElementWrapped =
+  option(
+    (
+      ~key: Js.nullable(string),
+      ~ref: Js.nullable(Js.nullable(reactRef) => unit)
+    ) =>
+    reactElement,
+  )
 and component = {
   debugName: string,
   reactClassInternal,
+  jsElementWrapped,
   render: unit => reactElement,
 };
 let anyToUnit: 'a => unit;
@@ -52,4 +61,5 @@ module WrapProps: {
     ) =>
     'd;
 };
+let wrapJsForReason: (~reactClass: reactClass, ~props: 'a, 'b) => component;
 [@bs.module "react"] external fragment: 'a = "Fragment";
