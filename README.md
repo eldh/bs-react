@@ -21,7 +21,7 @@ module Counter = {
   let make = (~initial=0, _children) => {
     ...component,
     render: _self => {
-      let (count, setCount) = Hooks.useState(initial);
+      let (count, setCount) = ReactHooks.useState(initial);
       <div>
         {ReasonReact.string(string_of_int(count))}
         <button onClick={_ => setCount(. count + 1)}>
