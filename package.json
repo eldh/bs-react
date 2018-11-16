@@ -1,5 +1,5 @@
 {
-  "name": "simple-reason-react",
+  "name": "bs-react",
   "version": "0.0.2",
   "description": "Minimal React bindings for Reason",
   "main": "lib/js/src/ReasonReact.js",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eldh/simple-reason-react.git"
+    "url": "git+https://github.com/eldh/bs-react.git"
   },
   "devDependencies": {
     "bs-platform": "^4.0.7"
