@@ -22,9 +22,7 @@
     "url": "git+https://github.com/eldh/bs-react.git"
   },
   "devDependencies": {
-    "bs-platform": "^4.0.7",
-    "react": "16.7.0-alpha.2",
-    "react-dom": "16.7.0-alpha.2"
+    "bs-platform": "^4.0.7"
   },
   "dependencies": {}
 }
