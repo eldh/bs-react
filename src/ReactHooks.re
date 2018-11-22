@@ -7,10 +7,10 @@ external useEffect: (unit => (. unit) => unit, array('a)) => unit = "";
 external useEffectWithoutDependencies: (unit => (. unit) => unit) => unit = "useEffect";
 
 [@bs.module "react"]
-external useEffectWithoutCleanup: (unit => unit, array('a)) => unit = "useEffect";
+external useEffectWithoutCleanup: (unit => option(unit), array('a)) => unit = "useEffect";
 
 [@bs.module "react"]
-external useEffectWithoutCleanupOrDependencies: (unit => unit) => unit = "useEffect";
+external useEffectWithoutCleanupOrDependencies: (unit => option(unit)) => unit = "useEffect";
 
 [@bs.module "react"]
 external useMutationEffect: (unit => (. unit) => unit) => unit = "";
