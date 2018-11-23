@@ -61,6 +61,10 @@ Later on, making this work with ReactMini or some other pure Reason implementati
 
 Let's chat on [Discord](https://discord.gg/reasonml)!
 
+## Contributions
+
+More than welcome!
+
 ## Thanks
 
 Hooks and Context types are copied from [Jared Forsyth](https://github.com/jaredly).
