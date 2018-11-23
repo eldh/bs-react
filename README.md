@@ -4,7 +4,7 @@
 npm install --save bs-react
 ```
 
-##What?
+## What?
 BsReact is a fork of [ReasonReact](https://reasonml.github.io/reason-react) adapted to work with [Hooks](https://reactjs.org/docs/hooks-intro.html) and [Context](https://reactjs.org/docs/context.html).
 
 Reason React uses the good old `createClass` under the hood. BsReact has a simplified api that converts components defined in Reason to plain function components, allowing hooks to be used.
