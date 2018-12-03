@@ -1,3 +1,5 @@
+%raw
+"/* eslint-disable */";
 
 type pair;
 

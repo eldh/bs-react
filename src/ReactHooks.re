@@ -1,3 +1,6 @@
+%raw
+"/* eslint-disable */";
+
 [@bs.module "react"] external useState: 'a => ('a, (. 'a) => unit) = "";
 
 [@bs.module "react"]

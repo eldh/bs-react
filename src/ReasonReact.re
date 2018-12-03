@@ -1,3 +1,6 @@
+%raw
+"/* eslint-disable */";
+
 type reactClass;
 
 type jsProps;

@@ -1,9 +1,5 @@
-/* First time reading an OCaml/Reason/BuckleScript file? */
-/* `external` is the foreign function call in OCaml. */
-/* here we're saying `I guarantee that on the JS side, we have a `render` function in the module "react-dom"
-   that takes in a reactElement, a dom element, and returns unit (nothing) */
-/* It's like `let`, except you're pointing the implementation to the JS side. The compiler will inline these
-   calls and add the appropriate `require("react-dom")` in the file calling this `render` */
+%raw
+"/* eslint-disable */";
 [@bs.val] [@bs.module "react-dom"]
 external render : (ReasonReact.reactElement, Dom.element) => unit = "render";
 
@@ -259,7 +255,6 @@ type props = {
   [@bs.optional] srcSet: string,
   [@bs.optional] start: int,
   [@bs.optional] step: float,
-  [@bs.optional] summary: string, /* deprecated */
   [@bs.optional] target: string,
   [@bs.optional] [@bs.as "type"] type_: string, /* has a fixed but large-ish set of possible values */ /* use this one. Previous one is deprecated */
   [@bs.optional] useMap: string,
@@ -606,8 +601,6 @@ type props = {
 };
 
 external objToDOMProps : Js.t({..}) => props = "%identity";
-
-[@deprecated "Please use ReactDOMRe.props instead"] type reactDOMProps = props;
 
 [@bs.splice] [@bs.val] [@bs.module "react"]
 external createElement :

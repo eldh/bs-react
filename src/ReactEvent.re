@@ -1,3 +1,5 @@
+%raw
+"/* eslint-disable */";
 type synthetic('a);
 
 module MakeEventWithType = (Type: {type t;}) => {
