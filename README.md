@@ -51,7 +51,6 @@ The plan is to support all functionality from React 16/17.
 - Suspense
 - React.lazy
 - React.pure
-- Error boundaries
 - React Native
 - etc
 
