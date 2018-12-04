@@ -1,0 +1,19 @@
+{2:top bs-react — ReasonReact for Hipsters 🐱👓}
+
+For the top-level library module see {!ReasonReact} and {!ReactEvent}.
+
+{%html:
+<nav class="toc">
+%}
+{ol
+  {li {{:#introduction} Introduction}}
+  }
+{%html:
+</nav>
+%}
+
+{3:introduction Introduction}
+
+BsReact is a set of bindings to {{:https://github.com/facebook/react}React.js}
+that support new features like {{:https://reactjs.org/docs/hooks-intro.html}
+Hooks} and {{:https://reactjs.org/docs/context.html}Context}.
