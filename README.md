@@ -1,5 +1,13 @@
+http://![npm](https://img.shields.io/npm/v/bs-react.svg)
 # BsReact
+ 
+The easiest way to try out `bs-react` is with `create-react-app`:
 
+```sh
+npx create-react-app my-app --scripts-version=bs-reasct-scripts
+```
+
+You can also install bs-react directly:
 ```sh
 npm install --save bs-react
 ```
