@@ -1,4 +1,4 @@
-http://![npm](https://img.shields.io/npm/v/bs-react.svg)
+![npm](https://img.shields.io/npm/v/bs-react.svg)
 # BsReact
  
 The easiest way to try out `bs-react` is with `create-react-app`:
