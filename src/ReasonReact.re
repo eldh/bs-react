@@ -292,7 +292,7 @@ module Router = {
       () => {
         let handleChange = url => setUrl(. url);
         let listener = watchUrl(handleChange);
-        (.) => unwatchUrl(listener);
+        Some((.) => unwatchUrl(listener));
       },
       [||],
     );

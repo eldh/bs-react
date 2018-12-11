@@ -6,6 +6,7 @@
 *.log
 .bsb.lock
 /src/*.js
+/lib
 
 # Editor
 /.idea/

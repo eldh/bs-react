@@ -4,16 +4,10 @@
 [@bs.module "react"] external useState: 'a => ('a, (. 'a) => unit) = "";
 
 [@bs.module "react"]
-external useEffect: (unit => (. unit) => unit, array('a)) => unit = "";
+external useEffect: (unit => option((. unit) => unit), array('a)) => unit = "";
 
 [@bs.module "react"]
-external useEffectWithoutDependencies: (unit => (. unit) => unit) => unit = "useEffect";
-
-[@bs.module "react"]
-external useEffectWithoutCleanup: (unit => option(unit), array('a)) => unit = "useEffect";
-
-[@bs.module "react"]
-external useEffectWithoutCleanupOrDependencies: (unit => option(unit)) => unit = "useEffect";
+external useEffectWithoutDependencies: (unit => option((. unit) => unit)) => unit = "useEffect";
 
 [@bs.module "react"]
 external useMutationEffect: (unit => (. unit) => unit) => unit = "";
