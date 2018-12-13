@@ -52,7 +52,7 @@ For more details, check out the source. Better docs are coming.
 
 ### Status
 
-Early experimentation. Only for the brave.
+Early experimentation. Expect breaking API changes without warning.
 
 ## Future
 
