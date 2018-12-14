@@ -29,7 +29,7 @@ The api is similar to ReasonReact, but there's only one type of component, and y
 
 Example:
 
-```reasonml
+```ocaml
 module Counter = {
   let component = ReasonReact.component("Counter");
 
