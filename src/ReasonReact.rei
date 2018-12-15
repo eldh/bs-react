@@ -1,53 +1,104 @@
 type reactClass;
+
 type jsProps;
+
 type reactElement;
-type reactRef;
+
 [@bs.val] external null: reactElement = "null";
+
 external string: string => reactElement = "%identity";
+
+type reactRefCurrent = Js.nullable(reactElement);
+
+[@bs.deriving abstract]
+type reactRef = {
+  [@bs.as "current"]
+  currentRef: reactRefCurrent,
+};
+
 external array: array(reactElement) => reactElement = "%identity";
-external refToJsObj: reactRef => Js.t({..}) = "%identity";
+
+external __currentToJsObj__: reactRefCurrent => Js.nullable(Js.t({..})) =
+  "%identity";
+
+let currentRefGetJs: reactRef => option(Js.t({..}));
+
 [@bs.splice] [@bs.val] [@bs.module "react"]
 external createElement:
   (reactClass, ~props: Js.t({..})=?, array(reactElement)) => reactElement =
   "createElement";
 
+[@bs.val] [@bs.module "react"]
+external createRef: unit => reactRef = "createRef";
+
+[@bs.val] [@bs.module "react"]
+external forwardRef: (. 'a) => 'a = "forwardRef";
+
 [@bs.splice] [@bs.module "react"]
 external cloneElement:
   (reactElement, ~props: Js.t({..})=?, array(reactElement)) => reactElement =
   "cloneElement";
-[@bs.module "react"] external createElementVerbatim: 'a = "createElement";
+
+[@bs.val] [@bs.module "react"]
+external createElementVerbatim: 'a = "createElement";
+
 let createDomElement: ('a, ~props: 'b, Js.Array.t('c)) => 'd;
+
 [@bs.val] external magicNull: 'a = "null";
+
 type reactClassInternal = reactClass;
+
 type renderNotImplemented =
   | RenderNotImplemented;
+
+/***
+ * Elements are what JSX blocks become. They represent the *potential* for a
+ * component instance and state to be created / updated. They are not yet
+ * instances.
+ */
+ 
 type element =
   | Element(component): element
 and jsPropsToReason('jsProps) = (. 'jsProps) => component
 and jsElementWrapped =
   option(
-    (
-      ~key: Js.nullable(string),
-      ~ref: Js.nullable(Js.nullable(reactRef) => unit)
-    ) =>
-    reactElement,
+    (~key: Js.nullable(string), ~ref: option(reactRef)) => reactElement,
   )
 and component = {
   debugName: string,
   reactClassInternal,
   jsElementWrapped,
-  render: unit => reactElement,
+  render: option(reactRef) => reactElement,
 };
 let anyToUnit: 'a => unit;
 let anyToTrue: 'a => bool;
 let renderDefault: unit => reactElement;
 let convertPropsIfTheyreFromJs: ('a, string) => 'b;
 let createClass: string => reactClass;
+let createForwardRefClass: string => reactClass;
 let component: string => component;
+let forwardRefComponent: string => component;
 let statelessComponent: string => component;
+/* 
+let createForwardRefClass = debugName: reactClass =>
+  ReasonReactOptimizedCreateClass.createClass(. {
+    "displayName": debugName,
+    "render":
+      forwardRef(.(props, ref: option(reactRef)) => {
+        let convertedReasonProps =
+          convertPropsIfTheyreFromJs(props, debugName);
+        let Element(created) = Obj.magic(convertedReasonProps);
+        let component = created;
+        Js.log2("ref", ref);
+
+        component.render(ref);
+      }),
+  }); */
+
 let element:
-  (~key: string=?, ~ref: Js.nullable(reactRef) => unit=?, component) =>
+  (~key: string=?, ~ref: option(reactRef)=?, component) =>
   reactElement;
+
 let wrapReasonForJs:
   (~component: component, jsPropsToReason('jsProps)) => reactClassInternal;
 module WrapProps: {
@@ -57,7 +108,7 @@ module WrapProps: {
       ~props: 'b,
       'c,
       ~key: Js.nullable(string),
-      ~ref: Js.nullable(Js.nullable(reactRef) => unit)
+      ~ref: option(reactRef),
     ) =>
     'd;
 };

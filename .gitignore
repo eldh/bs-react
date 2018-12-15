@@ -5,7 +5,7 @@
 /lib/ocaml/
 *.log
 .bsb.lock
-/src/*.js
+/src/*.bs.js
 /lib
 
 # Editor

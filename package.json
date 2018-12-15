@@ -4,7 +4,7 @@
   "description": "Minimal React bindings for Reason",
   "main": "lib/js/src/ReasonReact.js",
   "scripts": {
-    "build": "bsb -make-world",
+    "build": "bsb -clean-world -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
     "docs": "./scripts/mk-docs.sh BsReact ./lib/bs/src ./src \"*.cmti\"",

@@ -75,7 +75,7 @@ type props = {
   [@bs.optional]
   key: string,
   [@bs.optional]
-  ref: Js.nullable(Dom.element) => unit,
+  ref: option(ReasonReact.reactRef),
   /* accessibility */
   /* https://www.w3.org/TR/wai-aria-1.1/ */
   /* https://accessibilityresources.org/<aria-tag> is a great resource for these */

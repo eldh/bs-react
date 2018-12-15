@@ -7,20 +7,36 @@ type jsProps;
 
 type reactElement;
 
-type reactRef;
-
 [@bs.val] external null: reactElement = "null";
 
 external string: string => reactElement = "%identity";
 
+type reactRefCurrent = Js.nullable(reactElement);
+
+[@bs.deriving abstract]
+type reactRef = {
+  [@bs.as "current"]
+  currentRef: reactRefCurrent,
+};
+
 external array: array(reactElement) => reactElement = "%identity";
 
-external refToJsObj: reactRef => Js.t({..}) = "%identity";
+external __currentToJsObj__: reactRefCurrent => Js.nullable(Js.t({..})) =
+  "%identity";
+
+let currentRefGetJs = r =>
+  r->currentRefGet->__currentToJsObj__->Js.Nullable.toOption;
 
 [@bs.splice] [@bs.val] [@bs.module "react"]
 external createElement:
   (reactClass, ~props: Js.t({..})=?, array(reactElement)) => reactElement =
   "createElement";
+
+[@bs.val] [@bs.module "react"]
+external createRef: unit => reactRef = "createRef";
+
+[@bs.val] [@bs.module "react"]
+external forwardRef: (. 'a) => 'a = "forwardRef";
 
 [@bs.splice] [@bs.module "react"]
 external cloneElement:
@@ -54,24 +70,20 @@ type element =
 and jsPropsToReason('jsProps) = (. 'jsProps) => component
 and jsElementWrapped =
   option(
-    (
-      ~key: Js.nullable(string),
-      ~ref: Js.nullable(Js.nullable(reactRef) => unit)
-    ) =>
-    reactElement,
+    (~key: Js.nullable(string), ~ref: option(reactRef)) => reactElement,
   )
 and component = {
   debugName: string,
   reactClassInternal,
   jsElementWrapped,
-  render: unit => reactElement,
+  render: option(reactRef) => reactElement,
 };
 
 let anyToUnit = _ => ();
 
 let anyToTrue = _ => true;
 
-let renderDefault = () => string("RenderNotImplemented");
+let renderDefault = _ => string("RenderNotImplemented");
 let convertPropsIfTheyreFromJs = (props, debugName) => {
   let props = Obj.magic(props);
   switch (Js.Nullable.toOption(props##reasonProps)) {
@@ -92,8 +104,21 @@ let createClass = debugName: reactClass =>
       let convertedReasonProps = convertPropsIfTheyreFromJs(props, debugName);
       let Element(created) = Obj.magic(convertedReasonProps);
       let component = created;
-      component.render();
+      component.render(None);
     },
+  });
+
+let createForwardRefClass = debugName: reactClass =>
+  ReasonReactOptimizedCreateClass.createClass(. {
+    "displayName": debugName,
+    "render":
+      forwardRef(.(props, ref: option(reactRef)) => {
+        let convertedReasonProps =
+          convertPropsIfTheyreFromJs(props, debugName);
+        let Element(created) = Obj.magic(convertedReasonProps);
+        let component = created;
+        component.render(ref);
+      }),
   });
 
 let component = debugName => {
@@ -106,19 +131,23 @@ let component = debugName => {
   componentTemplate;
 };
 
-let statelessComponent = debugName: component => component(debugName);
+let forwardRefComponent = debugName => {
+  let componentTemplate = {
+    reactClassInternal: createForwardRefClass(debugName),
+    debugName,
+    render: renderDefault,
+    jsElementWrapped: None,
+  };
+  componentTemplate;
+};
 
-/***
- * Convenience for creating React elements before we have a better JSX transform.  Hopefully this makes it
- * usable to build some components while waiting to migrate the JSX transform to the next API.
- *
- * Constrain the component here instead of relying on the Element constructor which would lead to confusing
- * error messages.
- */
+let statelessComponent = component;
+
 let element =
     (
       ~key: string=Obj.magic(Js.Nullable.undefined),
-      ~ref: Js.nullable(reactRef) => unit=Obj.magic(Js.Nullable.undefined),
+      /* ~ref: Js.Nullable(reactRef) => unit=Obj.magic(Js.Nullable.undefined), */
+      ~ref: option(reactRef)=None,
       component: component,
     ) => {
   let element = Element(component);
@@ -126,7 +155,8 @@ let element =
   | Some(jsElementWrapped) =>
     jsElementWrapped(
       ~key=Js.Nullable.return(key),
-      ~ref=Js.Nullable.return(ref),
+      /* ~ref=Js.Nullable.return(ref), */
+      ~ref,
     )
   | None =>
     createElement(
@@ -155,7 +185,7 @@ module WrapProps = {
         ~props,
         children,
         ~key: Js.nullable(string),
-        ~ref: Js.nullable(Js.nullable(reactRef) => unit),
+        ~ref: option(reactRef),
       ) => {
     let props =
       Js.Obj.assign(
@@ -180,9 +210,6 @@ let wrapJsForReason = WrapProps.wrapJsForReason;
 [@bs.module "react"] external fragment: 'a = "Fragment";
 
 module Router = {
-  %raw
-  "/* eslint-disable */";
-
   [@bs.get] external location: Dom.window => Dom.location = "";
   [@bs.send] [@bs.send]
   /* actually the cb is Dom.event => unit, but let's restrict the access for now */
