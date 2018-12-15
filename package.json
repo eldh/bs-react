@@ -5,25 +5,29 @@
   "main": "lib/js/src/ReasonReact.js",
   "scripts": {
     "build": "bsb -clean-world -make-world",
-    "start": "bsb -make-world -w",
+    "start": "bsb -clean-world -make-world -w",
+    "docs": "bsdoc build BsReact",
     "clean": "bsb -clean-world",
-    "docs": "./scripts/mk-docs.sh BsReact ./lib/bs/src ./src \"*.cmti\"",
     "test": "exit 0"
   },
   "keywords": [
     "reasonml",
     "bucklescript",
     "react",
-    "hooks"
+    "hooks",
+    "context",
+    "suspense"
   ],
-  "author": "",
+  "author": "eldh",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eldh/bs-react.git"
   },
   "devDependencies": {
-    "bs-platform": "^4.0.7"
+    "bs-platform": "^4.0.14"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bsdoc": "^0.1.4"
+  }
 }

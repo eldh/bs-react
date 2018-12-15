@@ -1,6 +1,16 @@
 {
   "name": "bs-react",
-  "sources": "src",
-  "refmt": 3,
-  "bsc-flags": ["-bs-no-version-header"]
+  "sources": ["src"],
+  "suffix": ".bs.js",
+  "reason": {
+    "react-jsx": 2
+  },
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": false
+    }
+  ],
+  "bs-dependencies": ["bsdoc"],
+  "refmt": 3
 }
