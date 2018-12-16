@@ -31,8 +31,8 @@ external createElement:
 [@bs.val] [@bs.module "react"]
 external createRef: unit => reactRef = "createRef";
 
-[@bs.val] [@bs.module "react"]
-external forwardRef: (. 'a) => 'a = "forwardRef";
+/* [@bs.val] [@bs.module "react"]
+external forwardRef: (. 'a) => 'a = "forwardRef"; */
 
 [@bs.splice] [@bs.module "react"]
 external cloneElement:
@@ -74,11 +74,9 @@ let anyToUnit: 'a => unit;
 let anyToTrue: 'a => bool;
 let renderDefault: unit => reactElement;
 let convertPropsIfTheyreFromJs: ('a, string) => 'b;
-let createClass: string => reactClass;
-let createForwardRefClass: string => reactClass;
-let component: string => component;
-let forwardRefComponent: string => component;
-let statelessComponent: string => component;
+let createClass: (~memo:bool=?,~forwardRef:bool=?, string) => reactClass;
+let component: (~memo:bool=?,~forwardRef:bool=?, string) => component;
+let statelessComponent: (~memo:bool=?,~forwardRef:bool=?, string) => component;
 /* 
 let createForwardRefClass = debugName: reactClass =>
   ReasonReactOptimizedCreateClass.createClass(. {

@@ -1,5 +1,4 @@
-%raw
-"/* eslint-disable */";
+let identity = (. a) => a;
 
 type reactClass;
 
@@ -36,7 +35,9 @@ external createElement:
 external createRef: unit => reactRef = "createRef";
 
 [@bs.val] [@bs.module "react"]
-external forwardRef: (. 'a) => 'a = "forwardRef";
+external reactForwardRef: (. 'a) => 'a = "forwardRef";
+
+[@bs.val] [@bs.module "react"] external reactMemo: (. 'a) => 'a = "memo";
 
 [@bs.splice] [@bs.module "react"]
 external cloneElement:
@@ -97,22 +98,20 @@ let convertPropsIfTheyreFromJs = (props, debugName) => {
   };
 };
 
-let createClass = debugName: reactClass =>
-  ReasonReactOptimizedCreateClass.createClass(. {
-    "displayName": debugName,
-    "render": props => {
-      let convertedReasonProps = convertPropsIfTheyreFromJs(props, debugName);
-      let Element(created) = Obj.magic(convertedReasonProps);
-      let component = created;
-      component.render(None);
-    },
-  });
-
-let createForwardRefClass = debugName: reactClass =>
+let createClass = (~memo=false, ~forwardRef=false, debugName: string) => {
+  let renderWrapper =
+    switch (memo, forwardRef) {
+    | (true, true) => (
+        (. render) => reactMemo(. reactForwardRef(. render))
+      )
+    | (false, true) => reactForwardRef
+    | (true, false) => reactMemo
+    | (false, false) => ((. render) => render)
+    };
   ReasonReactOptimizedCreateClass.createClass(. {
     "displayName": debugName,
     "render":
-      forwardRef(.(props, ref: option(reactRef)) => {
+      renderWrapper(.(props, ref: option(reactRef)) => {
         let convertedReasonProps =
           convertPropsIfTheyreFromJs(props, debugName);
         let Element(created) = Obj.magic(convertedReasonProps);
@@ -120,20 +119,11 @@ let createForwardRefClass = debugName: reactClass =>
         component.render(ref);
       }),
   });
-
-let component = debugName => {
-  let componentTemplate = {
-    reactClassInternal: createClass(debugName),
-    debugName,
-    render: renderDefault,
-    jsElementWrapped: None,
-  };
-  componentTemplate;
 };
 
-let forwardRefComponent = debugName => {
+let component = (~memo=false, ~forwardRef=false, debugName) => {
   let componentTemplate = {
-    reactClassInternal: createForwardRefClass(debugName),
+    reactClassInternal: createClass(~memo, ~forwardRef, debugName),
     debugName,
     render: renderDefault,
     jsElementWrapped: None,
@@ -146,18 +136,13 @@ let statelessComponent = component;
 let element =
     (
       ~key: string=Obj.magic(Js.Nullable.undefined),
-      /* ~ref: Js.Nullable(reactRef) => unit=Obj.magic(Js.Nullable.undefined), */
       ~ref: option(reactRef)=None,
       component: component,
     ) => {
   let element = Element(component);
   switch (component.jsElementWrapped) {
   | Some(jsElementWrapped) =>
-    jsElementWrapped(
-      ~key=Js.Nullable.return(key),
-      /* ~ref=Js.Nullable.return(ref), */
-      ~ref,
-    )
+    jsElementWrapped(~key=Js.Nullable.return(key), ~ref)
   | None =>
     createElement(
       component.reactClassInternal,
