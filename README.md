@@ -60,9 +60,11 @@ The plan is to support all functionality from React 16/17.
 
 - Suspense
 - React.lazy
-- React.pure
+- React.memo
 - React Native
 - etc
+
+See the [project board](https://github.com/eldh/bs-react/projects/1) for planned tasks.
 
 I hope some of these things will make it into ReasonReact in some form.
 
