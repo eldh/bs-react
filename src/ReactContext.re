@@ -1,6 +1,4 @@
-%raw
-"/* eslint-disable */";
-
+/* 
 type pair;
 
 [@bs.get] external provider: pair => ReasonReact.reactClass = "Provider";
@@ -31,4 +29,4 @@ module Create = (Config: {
         children
       )
   };
-};
+}; */

@@ -4,6 +4,8 @@ type jsProps;
 
 type reactElement;
 
+/* type reasonProps; */
+
 [@bs.val] external null: reactElement = "null";
 
 external string: string => reactElement = "%identity";
@@ -23,10 +25,10 @@ external __currentToJsObj__: reactRefCurrent => Js.nullable(Js.t({..})) =
 
 let currentRefGetJs: reactRef => option(Js.t({..}));
 
-[@bs.splice] [@bs.val] [@bs.module "react"]
+/* [@bs.splice] [@bs.val] [@bs.module "react"]
 external createElement:
   (reactClass, ~props: Js.t({..})=?, array(reactElement)) => reactElement =
-  "createElement";
+  "createElement"; */
 
 [@bs.val] [@bs.module "react"]
 external createRef: unit => reactRef = "createRef";
@@ -34,22 +36,26 @@ external createRef: unit => reactRef = "createRef";
 /* [@bs.val] [@bs.module "react"]
 external forwardRef: (. 'a) => 'a = "forwardRef"; */
 
-[@bs.splice] [@bs.module "react"]
+/* [@bs.splice] [@bs.module "react"]
 external cloneElement:
   (reactElement, ~props: Js.t({..})=?, array(reactElement)) => reactElement =
-  "cloneElement";
+  "cloneElement"; */
 
-[@bs.val] [@bs.module "react"]
-external createElementVerbatim: 'a = "createElement";
+/* [@bs.val] [@bs.module "react"]
+external createElementVerbatim: 'a = "createElement"; */
 
-let createDomElement: ('a, ~props: 'b, Js.Array.t('c)) => 'd;
+/* let createDomElement: ('a, ~props: 'b, Js.Array.t('c)) => 'd; */
 
-[@bs.val] external magicNull: 'a = "null";
+/* [@bs.val] external magicNull: 'a = "null"; */
 
-type reactClassInternal = reactClass;
-
-type renderNotImplemented =
-  | RenderNotImplemented;
+/* type reactClassInternal = reactClass; */
+/* [@bs.val] [@bs.module "./maker.js"]
+external makeMake: (. 'fakeMake, string) => 'fakeMake = "createMake"; */
+/* [@bs.val] [@bs.module "./maker.js"]
+external dummyCreateClass: (. reactElement) => (reasonProps, reactClass, children) =
+  "createClass"; */
+/* type renderNotImplemented =
+  | RenderNotImplemented; */
 
 /***
  * Elements are what JSX blocks become. They represent the *potential* for a
@@ -57,26 +63,26 @@ type renderNotImplemented =
  * instances.
  */
  
-type element =
+/* type element =
   | Element(component): element
 and jsPropsToReason('jsProps) = (. 'jsProps) => component
-and jsElementWrapped =
+/* and jsElementWrapped =
   option(
     (~key: Js.nullable(string), ~ref: option(reactRef)) => reactElement,
-  )
+  ) */
 and component = {
   debugName: string,
   reactClassInternal,
   jsElementWrapped,
   render: option(reactRef) => reactElement,
-};
-let anyToUnit: 'a => unit;
-let anyToTrue: 'a => bool;
-let renderDefault: unit => reactElement;
-let convertPropsIfTheyreFromJs: ('a, string) => 'b;
-let createClass: (~memo:bool=?,~forwardRef:bool=?, string) => reactClass;
-let component: (~memo:bool=?,~forwardRef:bool=?, string) => component;
-let statelessComponent: (~memo:bool=?,~forwardRef:bool=?, string) => component;
+}; */
+/* let anyToUnit: 'a => unit; */
+/* let anyToTrue: 'a => bool; */
+/* let renderDefault: unit => reactElement; */
+/* let convertPropsIfTheyreFromJs: ('a, string) => 'b; */
+/* let createClass: (~memo:bool=?,~forwardRef:bool=?, string) => reactClass; */
+/* let component: (~memo:bool=?,~forwardRef:bool=?, string) => component; */
+/* let statelessComponent: (~memo:bool=?,~forwardRef:bool=?, string) => component; */
 /* 
 let createForwardRefClass = debugName: reactClass =>
   ReasonReactOptimizedCreateClass.createClass(. {
@@ -94,12 +100,15 @@ let createForwardRefClass = debugName: reactClass =>
   }); */
 
 let element:
-  (~key: string=?, ~ref: option(reactRef)=?, component) =>
+  (~key: string=?, ~ref: option(reactRef)=?, reactElement) =>
   reactElement;
 
-let wrapReasonForJs:
-  (~component: component, jsPropsToReason('jsProps)) => reactClassInternal;
-module WrapProps: {
+let make:
+    (string, ~memo:bool=?, ~forwardRef:bool=?, 'fakeMake) => 'fakeMake;
+
+/* let wrapReasonForJs:
+  (~component: component, jsPropsToReason('jsProps)) => reactClassInternal; */
+/* module WrapProps: {
   let wrapProps:
     (
       ~reactClass: 'a,
@@ -109,8 +118,8 @@ module WrapProps: {
       ~ref: option(reactRef),
     ) =>
     'd;
-};
-let wrapJsForReason: (~reactClass: reactClass, ~props: 'a, 'b) => component;
+}; */
+/* let wrapJsForReason: (~reactClass: reactClass, ~props: 'a, 'b) => component; */
 
 module Router: {
   /** update the url with the string path. Example: `push("/book/1")`, `push("/books#title")` */

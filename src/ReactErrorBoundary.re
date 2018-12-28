@@ -1,4 +1,4 @@
-%raw
+/* %raw
 "/* eslint-disable */";
 
 [@bs.module "./jsErrorBoundary"]
@@ -17,4 +17,4 @@ let make =
     ~reactClass=errorBoundary,
     ~props={"didCatch": didCatch, "renderError": renderError},
     children,
-  );
+  ); */

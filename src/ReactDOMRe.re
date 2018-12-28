@@ -1073,7 +1073,7 @@ include (
           /* Use varargs to avoid the ReactJS warning for duplicate keys in children */
           {
             [@bs.val] [@bs.module "react"]
-            external createElementInternalHack: 'a = "createElement";
+            external createElementInternalHack: 'createElementInternalHack = "createElement";
             [@bs.send]
             external apply:
               ('theFunction, 'theContext, 'arguments) =>

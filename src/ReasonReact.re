@@ -1,10 +1,13 @@
-let identity = (. a) => a;
-
 type reactClass;
 
 type jsProps;
 
 type reactElement;
+
+type reasonProps;
+
+type children = array(reactElement);
+/* type newComponent; */
 
 [@bs.val] external null: reactElement = "null";
 
@@ -34,10 +37,10 @@ external createElement:
 [@bs.val] [@bs.module "react"]
 external createRef: unit => reactRef = "createRef";
 
-[@bs.val] [@bs.module "react"]
-external reactForwardRef: (. 'a) => 'a = "forwardRef";
+/* [@bs.val] [@bs.module "react"]
+external reactForwardRef: (. 'forwardRef) => 'forwardRef = "forwardRef"; */
 
-[@bs.val] [@bs.module "react"] external reactMemo: (. 'a) => 'a = "memo";
+/* [@bs.val] [@bs.module "react"] external reactMemo: (. 'memo) => 'memo = "memo"; */
 
 [@bs.splice] [@bs.module "react"]
 external cloneElement:
@@ -45,47 +48,49 @@ external cloneElement:
   "cloneElement";
 
 [@bs.val] [@bs.module "react"]
-external createElementVerbatim: 'a = "createElement";
-
-let createDomElement = (s, ~props, children) => {
+external createElementVerbatim: 'createElementVerbatim = "createElement";
+[@bs.val] [@bs.module "./maker.js"]
+external makeMake: (. 'fakeMake, string) => 'fakeMake = "createMake";
+[@bs.val] [@bs.module "./maker.js"]
+external dummyCreateClass: (. reactElement) => (reasonProps, reactClass, array(reactElement)) =
+  "createClass";
+/* let createDomElement = (s, ~props, children) => {
   let vararg =
     [|Obj.magic(s), Obj.magic(props)|] |> Js.Array.concat(children);
   /* Use varargs to avoid warnings on duplicate keys in children */
   Obj.magic(createElementVerbatim)##apply(Js.Nullable.null, vararg);
-};
+}; */
 
-[@bs.val] external magicNull: 'a = "null";
+/* [@bs.val] external magicNull: 'a = "null"; */
 
-type reactClassInternal = reactClass;
+/* type renderNotImplemented =
+  | RenderNotImplemented; */
 
-type renderNotImplemented =
-  | RenderNotImplemented;
+/*
+   `[@JSX] Foo.createElement(~key=a, ~ref=b, ~foo=bar, ~children=[], ())` into
+   `ReasonReact.element(~key=a, ~ref=b, Foo.make(~foo=bar, [||]))`
+ */
 
 /***
  * Elements are what JSX blocks become. They represent the *potential* for a
  * component instance and state to be created / updated. They are not yet
  * instances.
  */
-type element =
-  | Element(component): element
-and jsPropsToReason('jsProps) = (. 'jsProps) => component
-and jsElementWrapped =
-  option(
-    (~key: Js.nullable(string), ~ref: option(reactRef)) => reactElement,
-  )
-and component = {
-  debugName: string,
-  reactClassInternal,
-  jsElementWrapped,
-  render: option(reactRef) => reactElement,
-};
+/* and jsPropsToReason('jsProps) = (. 'jsProps) => component */
+/* and jsElementWrapped =
+   option(
+     (~key: Js.nullable(string), ~ref: option(reactRef)) => reactElement,
+   ) */
 
+/* type makeFn = ((~key: option(string), ~ref: option(option(reactRef)),component) => reactElement); */
+
+/* 
 let anyToUnit = _ => ();
 
-let anyToTrue = _ => true;
+let anyToTrue = _ => true; */
 
-let renderDefault = _ => string("RenderNotImplemented");
-let convertPropsIfTheyreFromJs = (props, debugName) => {
+/* let renderDefault = _ => string("RenderNotImplemented"); */
+/* let convertPropsIfTheyreFromJs = (props, debugName) => {
   let props = Obj.magic(props);
   switch (Js.Nullable.toOption(props##reasonProps)) {
   | Some(props) => props
@@ -96,103 +101,102 @@ let convertPropsIfTheyreFromJs = (props, debugName) => {
       ),
     )
   };
-};
+}; */
 
-let createClass = (~memo=false, ~forwardRef=false, debugName: string) => {
-  let renderWrapper =
-    switch (memo, forwardRef) {
-    | (true, true) => (
-        (. render) => reactMemo(. reactForwardRef(. render))
-      )
-    | (false, true) => reactForwardRef
-    | (true, false) => reactMemo
-    | (false, false) => ((. render) => render)
-    };
-  ReasonReactOptimizedCreateClass.createClass(. {
-    "displayName": debugName,
-    "render":
-      renderWrapper(.(props, ref: option(reactRef)) => {
-        let convertedReasonProps =
-          convertPropsIfTheyreFromJs(props, debugName);
-        let Element(created) = Obj.magic(convertedReasonProps);
-        let component = created;
-        component.render(ref);
-      }),
-  });
-};
+/* let createClass = (debugName: string) => {
+     ReasonReactOptimizedCreateClass.createClass(. {
+       "displayName": debugName,
+       "render":
+         (props, ref: option(reactRef)) => {
+           let convertedReasonProps =
+             convertPropsIfTheyreFromJs(props, debugName);
+           let Element(created) = Obj.magic(convertedReasonProps);
+           let component = created;
+           component.render(ref);
+         },
+     });
+   }; */
 
-let component = (~memo=false, ~forwardRef=false, debugName) => {
-  let componentTemplate = {
-    reactClassInternal: createClass(~memo, ~forwardRef, debugName),
-    debugName,
-    render: renderDefault,
-    jsElementWrapped: None,
-  };
-  componentTemplate;
-};
+/* let component = (debugName) => {
+     let componentTemplate = {
+       reactClassInternal: createClass(debugName),
+       debugName,
+       render: renderDefault,
+       jsElementWrapped: None,
+     };
+     componentTemplate;
+   }; */
 
-let statelessComponent = component;
+/* let statelessComponent = component; */
 
 let element =
     (
       ~key: string=Obj.magic(Js.Nullable.undefined),
       ~ref: option(reactRef)=None,
-      component: component,
+      component: reactElement,
     ) => {
-  let element = Element(component);
-  switch (component.jsElementWrapped) {
-  | Some(jsElementWrapped) =>
-    jsElementWrapped(~key=Js.Nullable.return(key), ~ref)
-  | None =>
-    createElement(
-      component.reactClassInternal,
-      ~props={"key": key, "ref": ref, "reasonProps": element},
-      [||],
-    )
-  };
+  let (reasonProps, reactClass, _children) =
+    dummyCreateClass(. component);
+
+  createElement(
+    reactClass,
+    ~props={"key": key, "ref": ref, "reasonProps": reasonProps},
+    [||]
+  );
+  /* switch (component.jsElementWrapped) {
+     | Some(jsElementWrapped) =>
+       jsElementWrapped(~key=Js.Nullable.return(key), ~ref)
+     | None =>
+     }; */
 };
 
-let wrapReasonForJs =
-    (~component, jsPropsToReason: jsPropsToReason('jsProps)) => {
-  let jsPropsToReason: jsPropsToReason(jsProps) =
-    (. jsProps) => (Obj.magic(jsPropsToReason))(. jsProps);
-  Obj.magic(component.reactClassInternal)##prototype##jsPropsToReason
-  #= Some(jsPropsToReason);
-  component.reactClassInternal;
+let make =
+    (name, ~memo as _m=false, ~forwardRef as _f=false, reactClassToBe) => {
+  let makeFn = makeMake(. reactClassToBe, name);
+  Js.log2("makeFn", makeFn);
+  
+  makeFn;
 };
 
-module WrapProps = {
-  /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
-     reason component" */
-  let wrapProps =
-      (
-        ~reactClass,
-        ~props,
-        children,
-        ~key: Js.nullable(string),
-        ~ref: option(reactRef),
-      ) => {
-    let props =
-      Js.Obj.assign(
-        Js.Obj.assign(Js.Obj.empty(), Obj.magic(props)),
-        {"ref": ref, "key": key},
-      );
-    let varargs =
-      [|Obj.magic(reactClass), Obj.magic(props)|]
-      |> Js.Array.concat(Obj.magic(children));
-    /* Use varargs under the hood */
-    Obj.magic(createElementVerbatim)##apply(Js.Nullable.null, varargs);
-  };
-  let dummyInteropComponent = component("Interop");
+/* let wrapReasonForJs =
+       (~component, jsPropsToReason: jsPropsToReason('jsProps)) => {
+     let jsPropsToReason: jsPropsToReason(jsProps) =
+       (. jsProps) => (Obj.magic(jsPropsToReason))(. jsProps);
+     Obj.magic(component.reactClassInternal)##prototype##jsPropsToReason
+     #= Some(jsPropsToReason);
+     component.reactClassInternal;
+   }; */
+/*
+ module WrapProps = {
+   let wrapProps =
+       (
+         ~reactClass,
+         ~props,
+         children,
+         ~key: Js.nullable(string),
+         ~ref: option(reactRef),
+       ) => {
+     let props =
+       Js.Obj.assign(
+         Js.Obj.assign(Js.Obj.empty(), Obj.magic(props)),
+         {"ref": ref, "key": key},
+       );
+     let varargs =
+       [|Obj.magic(reactClass), Obj.magic(props)|]
+       |> Js.Array.concat(Obj.magic(children));
+     /* Use varargs under the hood */
+     Obj.magic(createElementVerbatim)##apply(Js.Nullable.null, varargs);
+   };
+   let dummyInteropComponent = component("Interop");
 
-  let wrapJsForReason = (~reactClass, ~props, children): component => {
-    let jsElementWrapped = Some(wrapProps(~reactClass, ~props, children));
-    {...dummyInteropComponent, jsElementWrapped};
-  };
-};
-let wrapJsForReason = WrapProps.wrapJsForReason;
+   let wrapJsForReason = (~reactClass, ~props, children): component => {
+     let jsElementWrapped = Some(wrapProps(~reactClass, ~props, children));
+     {...dummyInteropComponent, jsElementWrapped};
+   };
+ };
+ let wrapJsForReason = WrapProps.wrapJsForReason; */
 
-[@bs.module "react"] external fragment: 'a = "Fragment";
+[@bs.module "react"] external fragment: 'fragment = "Fragment";
 
 module Router = {
   [@bs.get] external location: Dom.window => Dom.location = "";
