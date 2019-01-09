@@ -1,5 +1,3 @@
-let identity = (. a) => a;
-
 type reactClass;
 
 type jsProps;
